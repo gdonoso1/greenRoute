@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<title>Green Route</title>
+</head>
+<body>
+	<!-- Navigation-->
+	<nav th:fragment="nav"
+		class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+		<div class="container px-4 px-lg-5">
+			<a class="navbar-brand" th:href="@{/}"><img class="icon"
+				th:src="@{'/templates/assets/icon.png'}" /> Green Route</a>
+			<div class="collapse navbar-collapse" id="navbarSupportedContent">
+				<ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+					<li class="nav-item"><a class="nav-link active"
+						aria-current="page" th:href="@{/}">Home</a></li>
+					<li class="nav-item"><a class="nav-link" th:href="@{/rutas}">Rutas</a></li>
+
+					<li class="nav-item dropdown"><a
+						class="nav-link dropdown-toggle" id="navbarDropdown"
+						th:href="@{/users/perfil}" role="button" data-bs-toggle="dropdown"
+						aria-expanded="false"
+						th:text="${#authentication.getPrincipal().getUsername}">Perfil</a>
+						<ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+							<li>
+								<form th:action="@{/users/perfil}" method="GET">
+									<input type="hidden" name="username"
+										th:value="${#authentication.getPrincipal().getUsername()}">
+									<button type="submit" class="dropdown-item"
+										id="buttonDatosPerfil" value=">Datos de Perfil">Datos
+										de Perfil</button>
+								</form>
+							</li>
+							<li>
+								<form th:action="@{/users}" method="GET">
+									<input type="hidden" name="username"
+										th:value="${#authentication.getPrincipal().getUsername()}">
+									<button
+										th:if="${#authentication.getPrincipal().getRol().nombre} == 'ADMIN'"
+										type="submit" class="dropdown-item" id="buttonControlAdmin"
+										value="Control de Usuarios">Control de Usuarios</button>
+								</form>
+							</li>
+							<li><hr class="dropdown-divider" /></li>
+							<li>
+								<form th:action="@{/users/perfil}" method="GET">
+									<input type="hidden" name="username"
+										th:value="${#authentication.getPrincipal().getUsername()}">
+									<button type="submit" class="dropdown-item"
+										id="buttonDatosPerfil" value=">Datos de Perfil">Mis Rutas</button>
+								</form>
+							</li>
+							<li>
+								<form th:action="@{/users/perfil/favoritas}" method="GET">
+									<input type="hidden" name="username"
+										th:value="${#authentication.getPrincipal().getUsername()}">
+									<button type="submit" class="dropdown-item"
+										id="buttonRutasPendientes" value="Datos de Perfil">Rutas
+										Favoritas</button>
+								</form>
+							</li>
+						</ul></li>
+					<li class="nav-item nuevaRuta"><a
+						class="btn btn-outline-success" style="color: white;"
+						th:href="@{/nuevaRuta}">NUEVA RUTA</a></li>
+					<li class="nav-item" sec:authorize="isAuthenticated()"><a
+						class="btn btn-dark" th:href="@{/logout}"
+						onclick="return confirm('Estas seguro que quieres cerrar sesión?');">Cerrar
+							sesión</a></li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+</body>
+</html>

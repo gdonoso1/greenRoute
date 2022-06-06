@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<title>Green Route</title>
+</head>
+<body>
+	<!-- Footer-->
+	
+			<div th:fragment="listMapUsers" class="card shadow-sm">
+				<img
+					src="https://www.nationalgeographic.com.es/medio/2021/07/01/glory-of-damavand-and-milky-way_710ab66c_1348x890.jpg"
+					alt="Girl in a jacket" width="100%" height="225">
+				<div class="card-body">
+					<p class="card-text" th:text="${ruta.nombre}"></p>
+					<p class="card-text" th:text="${ruta.descripcion}"></p>
+					<p class="card-text" th:text="${ruta.poblacion}"></p>
+
+					<div class="d-flex justify-content-between align-items-center">
+						<div class="btn-group">
+							<form th:action="@{/rutas/view}" method="GET">
+								<input type="hidden" name="id" th:value="${ruta.id}">
+								<button type="submit" class="btn btn-sm btn-light">Ver
+									Ruta</button>
+							</form>
+							<form th:action="@{/rutas/edit}" method="POST">
+								<input type="hidden" name="id" th:value="${ruta.id}">
+								<button
+									th:if="${#authentication.getPrincipal().getUsername()} == ${ruta.usuario.getUsername()}"
+									type="button" class="btn btn-sm btn-light">Edit</button>
+							</form>
+							<form th:action="@{/users/perfil/eliminarRuta}" method="POST">
+								<input type="hidden" name="id" th:value="${ruta.id}"> <input
+									type="hidden" name="username"
+									th:value="${#authentication.getPrincipal().getUsername()} ">
+
+								<button style="color:black;"
+									th:if="${#authentication.getPrincipal().getUsername()} == ${ruta.usuario.getUsername()}"
+									onclick="return confirm('Estas seguro que quieres eliminar la ruta ?');"
+									type="submit" class="btn btn-sm btn-outline-danger">Eliminar</button>
+
+							</form>
+						</div>
+						<small class="text-muted"
+							th:text="${ruta.usuario.getUsername()}+' - '+${ruta.getFecha()}"></small>
+					</div>
+				</div>
+			</div>
+</body>
+</html>

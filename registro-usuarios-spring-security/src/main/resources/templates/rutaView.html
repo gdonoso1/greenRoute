@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+<link rel="stylesheet"
+	href="https://unpkg.com/leaflet@1.3.1/dist/leaflet.css" />
+<!--<script src="https://unpkg.com/leaflet@1.3.1/dist/leaflet-src.js"
+  crossorigin=""></script>-->
+<script src="https://unpkg.com/leaflet@1.3.1/dist/leaflet.js"></script>
+
+
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<meta charset="utf-8" />
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<title>Green Route</title>
+<!-- Favicon-->
+<link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+
+<!-- Bootstrap icons-->
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css"
+	rel="stylesheet" />
+<!-- Core theme CSS (includes Bootstrap)-->
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+	rel="stylesheet">
+<link th:href="@{/templates/css/styles.css}" rel="stylesheet" />
+<link th:href="@{/templates/css/map.css}" rel="stylesheet" />
+</head>
+<body>
+	<!-- Navigation-->
+	<div th:replace="layout/nav:: nav"></div>
+	<!-- Section-->
+
+
+	<div class="container px-4 px-lg-5">
+		<br>
+		<div id="map"></div>
+		<br>
+		<div class="col row-cols-1 row-cols-sm-2 row-cols-md-1 g-3">
+			<div class="card shadow-sm">
+				<div class="card-body">
+					<div class="table-responsive">
+						<table class="table table-condensed table-responsive"
+							style="display: table">
+
+							<tr>
+								<td style="font-weight: bold;">Nombre de la ruta</td>
+								<td id="nombre" th:text="${ruta.nombre}"></td>
+								<td style="font-weight: bold;">Creador de la ruta</td>
+								<td id="username" th:text="${ruta.usuario.username}"></td>
+							</tr>
+							<tr>
+								<td style="font-weight: bold;">Poblacion</td>
+								<td id="poblacion" th:text="${ruta.poblacion}"></td>
+								<td style="font-weight: bold;">Longitud</td>
+								<td id="km" th:text="${ruta.km} + ' KM'"></td>
+							</tr>
+
+							<tr>
+								<td hidden="hidden" id="latitud" th:text="${ruta.latitud}"></td>
+								<td hidden="hidden" id="longitud" th:text="${ruta.longitud}"></td>
+								<td hidden="hidden" id="puntos" th:text="${puntos}"></td>
+							</tr>
+						</table>
+						<form th:action="@{/rutas/marcarFavorita}" method="get">
+							<input type="hidden" th:name="idRuta" th:value="${ruta.id}">
+							<input type="hidden" th:name="idUser"
+								th:value="${#authentication.getPrincipal().getId()}">
+							<p style="font-weight: bold;">Guardar RUTA como favorita</p>
+							<button type="submit" class="btn btn-light" id="buttonHecha"
+								value="Ruta Hecha">Guardar</button>
+						</form>
+						<br>
+						<form th:action="@{/rutas/editar}" method="get" th:if="${#authentication.getPrincipal().getUsername()} == ${ruta.usuario.getUsername()}">
+							<input type="hidden" th:name="idRuta" th:value="${ruta.id}">
+							<p style="font-weight: bold;">Editar RUTA</p>
+							<button  type="submit" class="btn btn-light" id="buttonHecha"
+								value="Ruta Hecha">Editar</button>
+						</form>
+					</div>
+				</div>
+			</div>
+			<br>
+			<div class="card shadow-sm">
+				<div class="card-body">
+
+					<p class="card-text" style="font-weight: bold;">DESCRIPCIÓN</p>
+					<p class="card-text" th:text="${ruta.descripcion}"></p>
+				</div>
+			</div>
+			<br>
+			<div class="card shadow-sm">
+				<div class="card-body">
+					<div class="table-responsive">
+						<p class="card-text" style="font-weight: bold;">COMENTARIOS</p>
+						<table class="table table-condensed table-responsive"
+							style="display: table">
+							<tr>
+								<td class="col-sm-2" style="font-weight: bold;">Usuario</td>
+								<td style="font-weight: bold;">Mensaje</td>
+							</tr>
+
+							<tr th:each="comentario : ${ruta.comentarios}">
+								<td th:text="${comentario.usuario.username}">ID</td>
+								<td th:text="${comentario.contenido}">ID</td>
+							</tr>
+						</table>
+					</div>
+					<div class="mb-3">
+						<label for="exampleFormControlTextarea1" class="form-label"
+							style="font-weight: bold;">Dejar un comentario</label>
+						<form th:action="@{/rutas/comentario}" method="post">
+							<textarea class="form-control" id="contenido" rows="3"
+								th:name="contenido"></textarea>
+							<input type="hidden" th:name="idRuta" th:value="${ruta.id}">
+							<input type="hidden" id="usersMap" th:name="username"
+								th:value="${#authentication.getPrincipal().getUsername()}">
+							<br>
+							<button type="submit" class="btn btn-success" id="buttonSaveMapa"
+								value="Enviar comentario">Enviar</button>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+	<br>
+
+
+	<!-- Footer-->
+	<div th:replace="layout/footer:: footer"></div>
+	<!-- Map core JS-->
+	<script type="text/javascript" th:src="@{/templates/js/mapView.js}"></script>
+	<!-- Bootstrap core JS-->
+	<script
+		src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
