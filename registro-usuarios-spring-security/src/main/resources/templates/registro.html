@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
 <head>
 <meta charset="utf-8">
 <title>Registro de usuarios</title>
@@ -9,7 +10,7 @@
 	rel="stylesheet">
 <style type="text/css">
 .log {
-	 padding-top: 20%;
+	padding-top: 20%;
 }
 </style>
 </head>
@@ -17,38 +18,40 @@
 
 	<div class="container">
 		<div class="col-auto log">
-				<div th:if=${param.exito}>
-					<div class="alert alert-info">Se ha registrado exitosamente a
-						la aplicación</div>
+			<div th:if=${param.error}>
+				<div class="alert alert-danger" th:text=${param.error}></div>
+			</div>
+			<div th:if=${param.exito}>
+				<div class="alert alert-info">Se ha registrado exitosamente a
+					la aplicación</div>
+			</div>
+
+			<h1>Registrate</h1>
+			<form th:action="@{/registro}" method="post" th:object="${usuario}">
+				<div class="form-group">
+					<label class="control-label" for="username">Nombre de
+						Usuario: </label> <input id="username" type="text" class="form-control"
+						th:field="*{username}" required autofocus="autofocus">
 				</div>
-				
-				<h1> <img width="5%"
-				th:src="@{'/templates/assets/icon.png'}" /> Regístrate</h1>
-				<form th:action="@{/registro}" method="post" th:object="${usuario}">
-					<div class="form-group">
-						<label class="control-label" for="username">Nombre de
-							Usuario: </label> <input id="username" type="text" class="form-control"
-							th:field="*{username}" required autofocus="autofocus">
-					</div>
-<br>
-					<div class="form-group">
-						<label class="control-label" for="email">Email : </label> <input
-							id="email" type="email" class="form-control" th:field="*{email}"
-							required autofocus="autofocus">
-					</div>
-<br>
-					<div class="form-group">
-						<label class="control-label" for="password">Password : </label> <input
-							type="password" id="password" class="form-control"
-							th:field="*{password}" required autofocus="autofocus">
-					</div>
-<br>
-					<div class="form-group">
-						<button type="submit" class="btn btn-success">Registrar</button>
-						<span>Si ya estas registrado <a th:href="@{/login}">inicia
-								sesión aqui</a></span>
-					</div>
-				</form>
+				<br>
+				<div class="form-group">
+					<label class="control-label" for="email">Email : </label> <input
+						id="email" type="email" class="form-control" th:field="*{email}"
+						required autofocus="autofocus">
+				</div>
+				<br>
+				<div class="form-group">
+					<label class="control-label" for="password">Password : </label> <input
+						type="password" id="password" class="form-control"
+						th:field="*{password}" required autofocus="autofocus">
+				</div>
+				<br>
+				<div class="form-group">
+					<button type="submit" class="btn btn-success">Registrar</button>
+					<span>Si ya estas registrado <a th:href="@{/login}">inicia
+							sesión aqui</a></span>
+				</div>
+			</form>
 
 		</div>
 	</div>
@@ -59,17 +62,3 @@
 		src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-

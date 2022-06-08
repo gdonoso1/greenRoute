@@ -1,7 +1,12 @@
 package proyecto.greenroute.controller;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Iterator;
+
+import javax.servlet.ServletException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
@@ -54,8 +59,24 @@ public class RutaController {
 	}
 
 	@GetMapping(path = "/view")
-	public ModelAndView getRuta(@RequestParam("id") Long id) {
+	public ModelAndView getRutaView(@RequestParam("id") Long id) {
 		ModelAndView modelview = new ModelAndView("rutaView");
+		Ruta ruta = rutaService.getRuta(id);
+		Collection<Punto> punto = ruta.getPunto();
+		String puntos = "";
+		for (Punto puntoRes : punto) {
+			puntos += puntoRes.toString();
+		}
+
+		modelview.getModelMap().addAttribute("ruta", ruta);
+		modelview.getModelMap().addAttribute("puntos", puntos);//
+		// [[3.24,4.22],[...],...] // {
+		return modelview;
+	}
+
+	@GetMapping(path = "/edit")
+	public ModelAndView getRutaEdit(@RequestParam("id") Long id) {
+		ModelAndView modelview = new ModelAndView("rutaEdit");
 		Ruta ruta = rutaService.getRuta(id);
 		Collection<Punto> punto = ruta.getPunto();
 		String puntos = "";
@@ -84,21 +105,6 @@ public class RutaController {
 
 	}
 
-//	@GetMapping(path = "/marcarPendiente")
-//	public ModelAndView rutaPendiente(@RequestParam("idUser") Long idUser, @RequestParam("idRuta") Long idRuta) {
-//		Ruta ruta = rutaService.getRuta(idRuta);
-//		Usuario usuario = userService.getUsuario(idUser);
-//		if (usuario.getPendiente(idRuta)) {
-//			usuario.quitarpendientes(ruta);
-//		} else {
-//			usuario.addHecha(ruta);
-//		}
-//
-//		userService.guardar(usuario);
-//		return new ModelAndView("redirect:/rutas/view?id=" + idRuta);
-//
-//	}
-
 	@PostMapping(path = "/comentario")
 	public ModelAndView comentarioMap(@RequestParam("contenido") String contenido, @RequestParam("idRuta") Long idRuta,
 			@RequestParam("username") String username) {
@@ -107,6 +113,78 @@ public class RutaController {
 		comentario.setFechaCreacion(new Date());
 		comentarioService.guardar(comentario);
 		return new ModelAndView("redirect:/rutas/view?id=" + idRuta);
+	}
+
+	@PostMapping("editRuta")
+	public ModelAndView rutaCreada(@RequestParam("idRuta") Long idRuta,
+			@RequestParam("arrayLatitud") double arrayLatitud[], @RequestParam("arrayLongitud") double arrayLongitud[],
+			@RequestParam("latitud") double latitud, @RequestParam("longitud") double longitud,
+			@RequestParam("nombre") String nombre, @RequestParam("poblacion") String poblacion,
+			@RequestParam("username") String username, @RequestParam("descripcion") String descripcion)
+			throws ServletException, IOException {
+
+		Usuario usuario = userService.getUsuario(username);
+
+		ArrayList<Punto> puntos = new ArrayList<Punto>();
+		Ruta ruta = rutaService.getRuta(idRuta);
+
+		for (int i = 0; i < arrayLatitud.length; i++) {
+			Punto punto = new Punto(arrayLatitud[i], arrayLongitud[i]);
+			punto.setRuta(ruta);
+			puntos.add(punto);
+		}
+		ruta.setNombre(nombre);
+		ruta.setLatitud(latitud);		
+		ruta.setLongitud(longitud);
+		ruta.setPoblacion(poblacion);
+		ruta.setDescripcion(descripcion);
+		
+		ruta.setPunto(puntos);
+		ruta.setKm(distanciaCoord(ruta.getPunto()));
+
+		rutaService.guardar(ruta);
+
+		return new ModelAndView("redirect:/rutas/view?id=" + idRuta);
+	}
+
+	public static int distanciaCoord(Collection<Punto> puntoKm) {
+		double lat1 = 0;
+		double lng1 = 0;
+		double lat2 = 0;
+		double lng2 = 0;
+		int distancia = 0;
+
+		Iterator<Punto> it = puntoKm.iterator();
+		boolean primerValor = false;
+		while (it.hasNext()) {
+			Punto puntoIt = it.next();
+			if (primerValor) {
+				lat2 = puntoIt.getLatitud();
+				lng2 = puntoIt.getLongitud();
+				// double radioTierra = 3958.75;//en millas
+				double radioTierra = 6371;// en kilómetros
+				double dLat = Math.toRadians(lat2 - lat1);
+				double dLng = Math.toRadians(lng2 - lng1);
+				double sindLat = Math.sin(dLat / 2);
+				double sindLng = Math.sin(dLng / 2);
+				double va1 = Math.pow(sindLat, 2)
+						+ Math.pow(sindLng, 2) * Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2));
+				double va2 = 2 * Math.atan2(Math.sqrt(va1), Math.sqrt(1 - va1));
+				distancia += radioTierra * va2;
+//				Segundo valor pasa a estar en el primero 
+				lat1 = lat2;
+				lng1 = lng2;
+			} else {
+//				Iniciamos primer valor
+				distancia = 33;
+				lat1 = puntoIt.getLatitud();
+				lng1 = puntoIt.getLongitud();
+
+			}
+			primerValor = true;
+		}
+
+		return distancia;
 	}
 
 }

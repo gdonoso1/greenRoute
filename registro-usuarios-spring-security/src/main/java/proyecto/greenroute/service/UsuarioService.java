@@ -23,4 +23,7 @@ public interface UsuarioService extends UserDetailsService {
 
 	public boolean eliminarUsuario(Long id);
 
+	public boolean existsByUsername(String username);
+	
+	public boolean existsByEmail(String email);
 }

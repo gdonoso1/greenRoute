@@ -39,6 +39,9 @@
 	<!-- <div th:replace="layout/header:: header"></div> -->
 	<!-- Section-->
 	<div class="container px-4 px-lg-5">
+		<div th:if=${error}>
+			<div class="alert alert-danger" th:text=${error}></div>
+		</div>
 		<br>
 		<div id="map"></div>
 		<br>
@@ -54,9 +57,10 @@
 									<td style="font-weight: bold;">Poblacion</td>
 								</tr>
 								<tr>
-									<td><input style="width: 100%;" type="text" id="nombre" name="nombre" required></td>
-									<td><input style="width: 100%;" type="text" id="poblacion" name="poblacion"
-										required></td>
+									<td><input style="width: 100%;" type="text" id="nombre"
+										name="nombre" required></td>
+									<td><input style="width: 100%;" type="text" id="poblacion"
+										name="poblacion" required></td>
 								</tr>
 							</table>
 							<input type="hidden" id="latitud" name="latitud"> <input

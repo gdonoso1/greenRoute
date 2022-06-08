@@ -74,8 +74,8 @@
 								value="Ruta Hecha">Guardar</button>
 						</form>
 						<br>
-						<form th:action="@{/rutas/editar}" method="get" th:if="${#authentication.getPrincipal().getUsername()} == ${ruta.usuario.getUsername()}">
-							<input type="hidden" th:name="idRuta" th:value="${ruta.id}">
+						<form th:action="@{/rutas/edit}" method="get" th:if="${#authentication.getPrincipal().getUsername()} == ${ruta.usuario.getUsername()}">
+							<input type="hidden" th:name="id" th:value="${ruta.id}">
 							<p style="font-weight: bold;">Editar RUTA</p>
 							<button  type="submit" class="btn btn-light" id="buttonHecha"
 								value="Ruta Hecha">Editar</button>

@@ -28,9 +28,7 @@ var punto;
 // Crea y elimina makers
 function onMapClick(e) {
 
-	console.log(document.getElementById("arrayLatitud").value)
-	console.log(document.getElementById("arrayLongitud").value)
-	console.log(document.getElementById("latitud").value)
+	console.log(latitudPuntos)
 	latitudPuntos.push(e.latlng.lat);
 	longitudPuntos.push(e.latlng.lng);
 
@@ -66,7 +64,7 @@ function onMapClick(e) {
 	punto.addEventListener('click', quitarMarker);
 }
 
-function quitarMarker() {
+function quitarMarker(e) {
 	map.removeLayer(this);
 }
 

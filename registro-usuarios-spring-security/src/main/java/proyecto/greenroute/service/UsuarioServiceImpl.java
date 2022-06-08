@@ -73,4 +73,16 @@ public class UsuarioServiceImpl implements UsuarioService, UserDetailsService {
 		}
 	}
 
+	@Override
+	public boolean existsByUsername(String username) {
+		// TODO Auto-generated method stub
+		return usuarioRepositorio.existsByUsername(username);
+	}
+
+	@Override
+	public boolean existsByEmail(String email) {
+		// TODO Auto-generated method stub
+		return usuarioRepositorio.existsByEmail(email);
+	}
+
 }

@@ -41,6 +41,9 @@ public class RutaNuevaController {
 	public ModelAndView nuevaRuta() {
 		ModelAndView modelview = new ModelAndView("rutasAdd");
 //		modelview.getModelMap().addAttribute("pueblos", poblacionService.listarPoblacion());
+		
+	
+		
 		return modelview;
 
 	}
@@ -59,22 +62,28 @@ public class RutaNuevaController {
 			@RequestParam("longitud") double longitud, @RequestParam("nombre") String nombre,
 			@RequestParam("poblacion") String poblacion, @RequestParam("username") String username,
 			@RequestParam("descripcion") String descripcion) throws ServletException, IOException {
+		String error = "introduzca dos coordenadas";
+		ModelAndView modelview = new ModelAndView("redirect:/nuevaRuta?" + error);
+		
+		try {
+			Usuario usuario = userService.getUsuario(username);
 
-		Usuario usuario = userService.getUsuario(username);
+			ArrayList<Punto> puntos = new ArrayList<Punto>();
+			Ruta ruta = new Ruta(nombre, latitud, longitud, poblacion, puntos, usuario, descripcion);
 
-		ArrayList<Punto> puntos = new ArrayList<Punto>();
-		Ruta ruta = new Ruta(nombre, latitud, longitud, poblacion, puntos, usuario, descripcion);
+			for (int i = 0; i < arrayLatitud.length; i++) {
+				Punto punto = new Punto(arrayLatitud[i], arrayLongitud[i]);
+				punto.setRuta(ruta);
+				puntos.add(punto);
+			}
 
-		for (int i = 0; i < arrayLatitud.length; i++) {
-			Punto punto = new Punto(arrayLatitud[i], arrayLongitud[i]);
-			punto.setRuta(ruta);
-			puntos.add(punto);
+			ruta.setCreacion(new Date());
+			ruta.setKm(distanciaCoord(puntos));
+			rutaService.guardar(ruta);
+		} catch (Exception e) {
+			return modelview;
 		}
-
-		ruta.setCreacion(new Date());
-		ruta.setKm(distanciaCoord(puntos));
-
-		rutaService.guardar(ruta);
+		
 
 		return new ModelAndView("redirect:/rutas");
 	}

@@ -23,23 +23,28 @@
 
 <script type="text/javascript">
 	function modificar() {
-
 		document.getElementById("hiddenUsername").value = document
 				.getElementById("username").value;
 		document.getElementById("hiddenEmail").value = document
 				.getElementById("email").value;
 		document.getElementById("hiddenPassword").value = document
 				.getElementById("password").value;
+		document.getElementById("editado").value = "2";
 	}
 	function check() {
 		console.log(password)
+		console.log(document.getElementById("checkPassword").checked)
+		console.log(document.getElementById("hiddenPassword").value)
 
-		if (document.getElementById("checkPassword").checked == true) {
+		if (document.getElementById("checkPassword").checked == false) {
 			document.getElementById("password").disabled = false;
 			document.getElementById("passwordEditado").value = "2";
+			document.getElementById("password").value = "";
 		} else {
 			document.getElementById("password").disabled = true;
 			document.getElementById("passwordEditado").value = "1";
+			document.getElementById("password").value = document
+					.getElementById("passwordOriginal").value;
 		}
 	}
 </script>
@@ -67,41 +72,47 @@
 						<form th:action="@{/users/perfil/editado}" method="post">
 							<input type="hidden" name="idUser" th:value="${usuario.id}">
 							<input type="hidden" name="passwordEditado" id="passwordEditado"
-								th:value="1"> <input type="hidden" name="username"
-								id="hiddenUsername"> <input type="hidden"
-								name="password" id="hiddenPassword"> <input
+								th:value="1"> <input type="hidden" name="editado"
+								id="editado" th:value="1"> <input type="hidden"
+								name="username" id="hiddenUsername"> <input
+								type="hidden" name="password" id="hiddenPassword"> <input
 								type="hidden" name="email" id="hiddenEmail">
-							<button
-								th:if="${#authentication.getPrincipal().getUsername()} == ${usuario.username}"
-								type="submit" class="btn btn-success" id="buttonEditar"
-								value="Editar" onclick="modificar()">Guardar</button>
+							<button type="submit" class="btn btn-success" id="buttonGuardar"
+								value="Guardar"
+								onclick="return confirm('Tu sesión será cerrada. Quieres guardar los datos?');">Guardar</button>
 						</form>
 					</div>
 					<form th:action="@{/perfil/}" method="post"
 						class="needs-validation">
 						<div class="row mt-2">
+							<div th:if=${error}>
+								<div class="alert alert-danger" th:text=${error}></div>
+							</div>
 							<div class="col-md-12">
 								<label class="labels">Nombre de usuario</label><input
 									type="text" class="form-control" placeholder="username"
-									th:value="${usuario.username}" id="username">
+									th:value="${usuario.username}" id="username"
+									onKeyUp="modificar();">
 							</div>
 						</div>
 						<div class="row mt-2">
 							<div class="col-md-12">
 								<label class="labels">Contraseña</label><input type="password"
 									id="password" class="form-control" placeholder="contrasenya"
-									th:value="${usuario.password}" disabled> <input
-									class="form-check-input" type="checkbox" value=""
-									id="checkPassword" onclick="check()"><label
-									class="labels"> Cambiar contraseña</label>
+									th:value="${usuario.password}" onKeyUp="modificar();" disabled>
+								<input type="hidden" id="passwordOriginal"
+									th:value="${usuario.password}"> <input
+									class="form-check-input" type="checkbox" id="checkPassword"
+									onclick="check()" checked><label class="labels">
+									Cambiar contraseña</label>
 							</div>
 
 						</div>
 						<div class="row mt-2">
 							<div class="col-md-12">
-								<label class="labels">Email</label><input type="email"
+								<label class="labels">Emailo</label><input type="email"
 									class="form-control" placeholder="email"
-									th:value="${usuario.email}" id="email">
+									th:value="${usuario.email}" id="email" onKeyUp="modificar();">
 							</div>
 						</div>
 					</form>

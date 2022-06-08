@@ -41,9 +41,11 @@
 				<div class="p-3 py-5">
 					<div class="d-flex justify-content-between align-items-center mb-3">
 						<h4 class="text-right">Perfil de usuario</h4>
-						<form th:action="@{/users/perfil}" method="post">
+						<form th:action="@{/users/perfil/edit}" method="get">
+							<input type="hidden" name="idUser" th:value="${usuario.id}">
 							<input type="hidden" name="username"
 								th:value="${usuario.username}"> <input type="hidden"
+								name="error" th:value="${error}"> <input type="hidden"
 								name="password" th:value="${usuario.password}"> <input
 								type="hidden" name="email" th:value="${usuario.email}">
 							<button

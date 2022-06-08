@@ -30,7 +30,7 @@
 								<input type="hidden" name="id" th:value="${ruta.id}">
 								<button
 									th:if="${#authentication.getPrincipal().getUsername()} == ${ruta.usuario.getUsername()}"
-									type="button" class="btn btn-light">Edit</button>
+									type="submit" class="btn btn-light">Edit</button>
 							</form>
 						</div>
 						<small class="text-muted"

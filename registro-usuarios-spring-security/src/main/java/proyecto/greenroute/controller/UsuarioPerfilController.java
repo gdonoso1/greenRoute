@@ -40,12 +40,15 @@ public class UsuarioPerfilController {
 
 	}
 
-	@PostMapping()
-	public ModelAndView perfilUsuarioEdit(@RequestParam("username") String username)
+	@GetMapping("edit")
+	public ModelAndView perfilUsuarioEdit(@RequestParam("idUser") Long idUser, @RequestParam("error") String error)
 			throws ServletException, IOException {
 		ModelAndView modelview = new ModelAndView("perfilEdit");
 
-		modelview.getModelMap().addAttribute("usuario", usuarioServicio.getUsuario(username));
+		modelview.getModelMap().addAttribute("usuario", usuarioServicio.getUsuario(idUser));
+		if (!error.equals("")) {
+			modelview.getModelMap().addAttribute("error", error);
+		}
 
 		return modelview;
 
@@ -53,19 +56,40 @@ public class UsuarioPerfilController {
 
 	@PostMapping("/editado")
 	public ModelAndView perfilUsuarioEditado(@RequestParam("idUser") Long idUser,
-			@RequestParam("passwordEditado") Long passwordEditado, @RequestParam("username") String username,
-			@RequestParam("email") String email, @RequestParam("password") String password)
-			throws ServletException, IOException {
+			@RequestParam("passwordEditado") String passwordEditado, @RequestParam("editado") String editado,
+			@RequestParam("username") String username, @RequestParam("email") String email,
+			@RequestParam("password") String password) throws ServletException, IOException {
 		Usuario usuario = usuarioServicio.getUsuario(idUser);
-		usuario.setUsername(username);
-		if (passwordEditado.equals("2")) {
-			usuario.setPassword(passwordEncoder.encode(password));
+
+		ModelAndView modelview = new ModelAndView("redirect:/users/perfil/edit");
+		try {
+			if (editado.equals("1")) {
+				return new ModelAndView("redirect:/users/perfil?username=" + usuario.getUsername());
+
+			} else if (usuarioServicio.existsByEmail(email)) {
+				modelview.getModelMap().addAttribute("error", "Email ya en uso");
+				modelview.getModelMap().addAttribute("idUser", usuario.getId());
+				return modelview;
+			} else if (editado.equals("2")) {
+				usuario.setUsername(username);
+
+				if (passwordEditado.equals("2")) {
+					usuario.setPassword(passwordEncoder.encode(password));
+				}
+				usuario.setEmail(email);
+				usuarioServicio.guardar(usuario);
+
+			}
+
+		} catch (Exception e) {
+			if (usuarioServicio.existsByUsername(username)) {
+				modelview.getModelMap().addAttribute("error", "Nombre de usuario existente");
+				modelview.getModelMap().addAttribute("idUser", usuario.getId());
+				return modelview;
+			}
 		}
-		usuario.setEmail(email);
-		usuarioServicio.guardar(usuario);
 
-		return new ModelAndView("redirect:/users/perfil?username=" + username);
-
+		return new ModelAndView("redirect:/login?logout");
 	}
 
 	@GetMapping("/favoritas")

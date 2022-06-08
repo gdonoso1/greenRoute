@@ -59,9 +59,9 @@
 
 					<td><form th:action="@{/users/editado}" method="POST">
 							<input type="hidden" id="hiddenEmailOriginal"
-								name="usernameOriginal" th:value="${usuario.username}"> <input
-								type="hidden" id="hiddenUsername" name="username"> <input
-								type="hidden" id="hiddenEmail" name="email">
+								name="usernameOriginal" th:value="${usuario.username}">
+							<input type="hidden" id="hiddenUsername" name="username">
+							<input type="hidden" id="hiddenEmail" name="email">
 							<button type="submit" class="btn btn-secondary" id="buttonEdit"
 								value="Editar usuario">Editar</button>
 						</form></td>
